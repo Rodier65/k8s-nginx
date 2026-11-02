@@ -1,28 +1,30 @@
 # Kubernetes Nginx Deployment
 
-Deployment of Nginx on a K3s cluster using Kubernetes manifests and Traefik.
+Deployment of Nginx on a K3s cluster using Kubernetes manifests, Kustomize and Traefik.
 
 ## Technologies
 
 - Kubernetes (K3s)
 - Nginx
-- Traefik
+- Traefik (Ingress Controller)
+- Kustomize
 - Git & GitHub
 
 ## Features
 
 - Deployment and Service
-- Ingress configuration
+- Ingress configuration with Traefik
 - Readiness and Liveness probes
 - Horizontal Pod Autoscaler (HPA)
 - RBAC (read-only access)
-- CPU and memory resource limits
+- CPU and memory requests/limits
 
 ## Project Structure
 
 ```text
 k8s-nginx/
 ├── base/
+│   ├── kustomization.yaml
 │   ├── namespace.yaml
 │   ├── deployment.yaml
 │   ├── service.yaml
@@ -35,17 +37,42 @@ k8s-nginx/
 ## Deployment
 
 ```bash
-kubectl apply -f base/
+kubectl apply -k base/
 ```
 
 ## Verification
 
 ```bash
-kubectl get pods -n demo
-kubectl get svc -n demo
-kubectl get ingress -n demo
-kubectl get hpa -n demo
-kubectl get pvc -n demo
+kubectl get all,ingress,hpa -n demo
+```
+
+## Test Autoscaling
+
+```bash
+kubectl run load-gen -n demo --rm -it --image=busybox:1.36 -- \
+  /bin/sh -c "while true; do wget -q -O- http://nginx-service; done"
+```
+
+In another terminal:
+
+```bash
+kubectl get hpa -n demo -w
+```
+
+> K3s includes Metrics Server, which provides the metrics required by the HPA.
+
+## Test RBAC
+
+```bash
+kubectl auth can-i list pods -n demo \
+  --as=system:serviceaccount:demo:nginx-viewer
+
+# Expected: yes
+
+kubectl auth can-i delete pods -n demo \
+  --as=system:serviceaccount:demo:nginx-viewer
+
+# Expected: no
 ```
 
 ## Access
@@ -57,7 +84,9 @@ http://<SERVER_IP>
 ## Cleanup
 
 ```bash
-kubectl delete -f base/
+kubectl delete -k base/
 ```
 
-**Goal:** Practice Kubernetes fundamentals, workload management, autoscaling and access control on a K3s cluster.
+## Goal
+
+Practice Kubernetes fundamentals, workload management, autoscaling, access control and application deployment on a K3s cluster.
