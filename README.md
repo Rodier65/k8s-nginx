@@ -36,7 +36,7 @@ k8s-nginx/
 
 ```bash
 kubectl apply -f base/
-
+```
 
 ## Verification
 
@@ -46,15 +46,18 @@ kubectl get svc -n demo
 kubectl get ingress -n demo
 kubectl get hpa -n demo
 kubectl get pvc -n demo
-
+```
 
 ## Access
 
+```text
 http://<SERVER_IP>
-
+```
 
 ## Cleanup
 
+```bash
 kubectl delete -f base/
+```
 
 **Goal:** Practice Kubernetes fundamentals, workload management, autoscaling and access control on a K3s cluster.
