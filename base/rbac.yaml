@@ -1,0 +1,36 @@
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nginx-viewer
+  namespace: demo
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: nginx-viewer
+  namespace: demo
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: nginx-viewer
+  namespace: demo
+subjects:
+  - kind: ServiceAccount
+    name: nginx-viewer
+    namespace: demo
+roleRef:
+  kind: Role
+  name: nginx-viewer
+  apiGroup: rbac.authorization.k8s.io
