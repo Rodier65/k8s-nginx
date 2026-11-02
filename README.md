@@ -1,33 +1,60 @@
 # Kubernetes Nginx Deployment
 
-A simple Nginx deployment on K3s using Kubernetes and Traefik.
+Deployment of Nginx on a K3s cluster using Kubernetes manifests and Traefik.
 
 ## Technologies
+
 - Kubernetes (K3s)
 - Nginx
 - Traefik
-- Git and GitHub
+- Git & GitHub
 
-## Deploy
+## Features
+
+- Deployment and Service
+- Ingress configuration
+- Readiness and Liveness probes
+- Horizontal Pod Autoscaler (HPA)
+- RBAC (read-only access)
+- CPU and memory resource limits
+
+## Project Structure
+
+```text
+k8s-nginx/
+├── base/
+│   ├── namespace.yaml
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   ├── ingress.yaml
+│   ├── hpa.yaml
+│   └── rbac.yaml
+└── README.md
+```
+
+## Deployment
 
 ```bash
 kubectl apply -f base/
-```
 
-## Verify
+
+## Verification
 
 ```bash
 kubectl get pods -n demo
 kubectl get svc -n demo
 kubectl get ingress -n demo
-```
+kubectl get hpa -n demo
+kubectl get pvc -n demo
+
 
 ## Access
 
-Open `http://<YOUR_SERVER_IP>` in your browser.
+http://<SERVER_IP>
+
 
 ## Cleanup
 
-```bash
 kubectl delete -f base/
-```
+
+**Goal:** Practice Kubernetes fundamentals, workload management, autoscaling and access control on a K3s cluster.
